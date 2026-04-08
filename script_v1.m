@@ -5,7 +5,7 @@ close all;
 %% -------------------------------
 % Number of samples
 %% -------------------------------
-N = 100;
+% N = 100;
 
 %% -------------------------------
 % Sampling rates
@@ -13,13 +13,13 @@ N = 100;
 Fs1 = 10e6;   % RAM1
 Fs2 = 15e6;   % RAM2
 Fs3 = 20e6;   % RAM3
-
+T = 1e-5; %time of sampling
 %% -------------------------------
 % Time vectors
 %% -------------------------------
-t1 = (0:N-1)/Fs1;
-t2 = (0:N-1)/Fs2;
-t3 = (0:N-1)/Fs3;
+t1 = (0:1/Fs1:T);
+t2 = (0:1/Fs2:T);
+t3 = (0:1/Fs3:T);
 
 %% -------------------------------
 % Generate complex signals
@@ -45,34 +45,38 @@ x3 = exp(1j*2*pi*f3*t3);
 % RAM1: 8-bit complex
 x1_real = fi(real(x1), 1, 8, 6);
 x1_imag = fi(imag(x1), 1, 8, 6);
-ram1_data = complex(double(x1_real), double(x1_imag));
+ram1_data_val = complex(x1_real, x1_imag);
+ram1_data=timetable(ram1_data_val,SampleRate=Fs1);
 
 % RAM2: 10-bit complex
 x2_real = fi(real(x2), 1, 10, 8);
 x2_imag = fi(imag(x2), 1, 10, 8);
-ram2_data = complex(double(x2_real), double(x2_imag));
+ram2_data_val = complex(x2_real, x2_imag);
+ram2_data=timetable(ram2_data_val,SampleRate=Fs2);
 
 % RAM3: 12-bit complex
 x3_real = fi(real(x3), 1, 12, 10);
 x3_imag = fi(imag(x3), 1, 12, 10);
-ram3_data = complex(double(x3_real), double(x3_imag));
+ram3_data_val = complex(x3_real, x3_imag);
+ram3_data=timetable(ram3_data_val,SampleRate=Fs3);
+
 
 %% -------------------------------
 % Display info
 %% -------------------------------
 disp('RAM1 (8-bit) sample:');
-disp(ram1_data(1:5));
+disp(ram1_data_val(1:5));
 
 disp('RAM2 (10-bit) sample:');
-disp(ram2_data(1:5));
+disp(ram2_data_val(1:5));
 
 disp('RAM3 (12-bit) sample:');
-disp(ram3_data(1:5));
+disp(ram3_data_val(1:5));
 
 %% -------------------------------
 % Optional: plot real parts
 %% -------------------------------
 figure;
-subplot(3,1,1); plot(real(ram1_data)); title('RAM1 Signal');
-subplot(3,1,2); plot(real(ram2_data)); title('RAM2 Signal');
-subplot(3,1,3); plot(real(ram3_data)); title('RAM3 Signal');
+subplot(3,1,1); plot(real(ram1_data_val)); title('RAM1 Signal');
+subplot(3,1,2); plot(real(ram2_data_val)); title('RAM2 Signal');
+subplot(3,1,3); plot(real(ram3_data_val)); title('RAM3 Signal');
