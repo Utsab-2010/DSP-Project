@@ -1,0 +1,28 @@
+
+# Simulink and MATLAB generated folders
+slprj/
+sccprj/
+codegen/
+helpsearch*/
+
+# Simulation and Code Generation cache
+*.slxc
+
+# Autosave and temporary files
+*.asv
+*.m~
+*.autosave
+*.slx.r*
+*.mdl.r*
+
+# Compiled MEX binaries
+*.mex*
+
+# Application and toolbox packages
+*.mlappinstall
+*.mltbx
+*.ctf
+
+# Session and cloud data
+octave-workspace
+.MATLABDriveTag
