@@ -1,0 +1,78 @@
+clc;
+clear;
+close all;
+
+%% -------------------------------
+% Number of samples
+%% -------------------------------
+N = 100;
+
+%% -------------------------------
+% Sampling rates
+%% -------------------------------
+Fs1 = 10e6;   % RAM1
+Fs2 = 15e6;   % RAM2
+Fs3 = 20e6;   % RAM3
+
+%% -------------------------------
+% Time vectors
+%% -------------------------------
+t1 = (0:N-1)/Fs1;
+t2 = (0:N-1)/Fs2;
+t3 = (0:N-1)/Fs3;
+
+%% -------------------------------
+% Generate complex signals
+% Keep freq within bandwidth
+%% -------------------------------
+
+% RAM1: BW = 2 MHz → choose 1 MHz tone
+f1 = 1e6;
+x1 = exp(1j*2*pi*f1*t1);
+
+% RAM2: BW = 4 MHz → choose 2 MHz tone
+f2 = 2e6;
+x2 = exp(1j*2*pi*f2*t2);
+
+% RAM3: BW = 6 MHz → choose 3 MHz tone
+f3 = 3e6;
+x3 = exp(1j*2*pi*f3*t3);
+
+%% -------------------------------
+% Quantization (IMPORTANT)
+%% -------------------------------
+
+% RAM1: 8-bit complex
+x1_real = fi(real(x1), 1, 8, 6);
+x1_imag = fi(imag(x1), 1, 8, 6);
+ram1_data = complex(double(x1_real), double(x1_imag));
+
+% RAM2: 10-bit complex
+x2_real = fi(real(x2), 1, 10, 8);
+x2_imag = fi(imag(x2), 1, 10, 8);
+ram2_data = complex(double(x2_real), double(x2_imag));
+
+% RAM3: 12-bit complex
+x3_real = fi(real(x3), 1, 12, 10);
+x3_imag = fi(imag(x3), 1, 12, 10);
+ram3_data = complex(double(x3_real), double(x3_imag));
+
+%% -------------------------------
+% Display info
+%% -------------------------------
+disp('RAM1 (8-bit) sample:');
+disp(ram1_data(1:5));
+
+disp('RAM2 (10-bit) sample:');
+disp(ram2_data(1:5));
+
+disp('RAM3 (12-bit) sample:');
+disp(ram3_data(1:5));
+
+%% -------------------------------
+% Optional: plot real parts
+%% -------------------------------
+figure;
+subplot(3,1,1); plot(real(ram1_data)); title('RAM1 Signal');
+subplot(3,1,2); plot(real(ram2_data)); title('RAM2 Signal');
+subplot(3,1,3); plot(real(ram3_data)); title('RAM3 Signal');
