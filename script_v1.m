@@ -45,19 +45,19 @@ x3 = exp(1j*2*pi*f3*t3);
 % RAM1: 8-bit complex
 x1_real = fi(real(x1), 1, 8, 6);
 x1_imag = fi(imag(x1), 1, 8, 6);
-ram1_data_val = complex(double(x1_real), double(x1_imag));
+ram1_data_val = complex(x1_real, x1_imag);
 ram1_data=timetable(ram1_data_val,SampleRate=Fs1);
 
 % RAM2: 10-bit complex
 x2_real = fi(real(x2), 1, 10, 8);
 x2_imag = fi(imag(x2), 1, 10, 8);
-ram2_data_val = complex(double(x2_real), double(x2_imag));
+ram2_data_val = complex(x2_real, x2_imag);
 ram2_data=timetable(ram2_data_val,SampleRate=Fs2);
 
 % RAM3: 12-bit complex
 x3_real = fi(real(x3), 1, 12, 10);
 x3_imag = fi(imag(x3), 1, 12, 10);
-ram3_data_val = complex(double(x3_real), double(x3_imag));
+ram3_data_val = complex(x3_real, x3_imag);
 ram3_data=timetable(ram3_data_val,SampleRate=Fs3);
 
 
