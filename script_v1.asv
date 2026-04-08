@@ -46,37 +46,35 @@ x3 = exp(1j*2*pi*f3*t3);
 x1_real = fi(real(x1), 1, 8, 6);
 x1_imag = fi(imag(x1), 1, 8, 6);
 ram1_data_val = complex(double(x1_real), double(x1_imag));
-ram1_data=timetable(ram1_data_val,SampleRate=Fs1);
+ram1_data=timetable(t1,ram1_data);
 
 % RAM2: 10-bit complex
 x2_real = fi(real(x2), 1, 10, 8);
 x2_imag = fi(imag(x2), 1, 10, 8);
-ram2_data_val = complex(double(x2_real), double(x2_imag));
-ram2_data=timetable(ram2_data_val,SampleRate=Fs2);
+ram2_data = complex(double(x2_real), double(x2_imag));
 
 % RAM3: 12-bit complex
 x3_real = fi(real(x3), 1, 12, 10);
 x3_imag = fi(imag(x3), 1, 12, 10);
-ram3_data_val = complex(double(x3_real), double(x3_imag));
-ram3_data=timetable(ram3_data_val,SampleRate=Fs3);
+ram3_data = complex(double(x3_real), double(x3_imag));
 
 
 %% -------------------------------
 % Display info
 %% -------------------------------
 disp('RAM1 (8-bit) sample:');
-disp(ram1_data_val(1:5));
+disp(ram1_data(1:5));
 
 disp('RAM2 (10-bit) sample:');
-disp(ram2_data_val(1:5));
+disp(ram2_data(1:5));
 
 disp('RAM3 (12-bit) sample:');
-disp(ram3_data_val(1:5));
+disp(ram3_data(1:5));
 
 %% -------------------------------
 % Optional: plot real parts
 %% -------------------------------
 figure;
-subplot(3,1,1); plot(real(ram1_data_val)); title('RAM1 Signal');
-subplot(3,1,2); plot(real(ram2_data_val)); title('RAM2 Signal');
-subplot(3,1,3); plot(real(ram3_data_val)); title('RAM3 Signal');
+subplot(3,1,1); plot(real(ram1_data)); title('RAM1 Signal');
+subplot(3,1,2); plot(real(ram2_data)); title('RAM2 Signal');
+subplot(3,1,3); plot(real(ram3_data)); title('RAM3 Signal');
