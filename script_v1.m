@@ -3,9 +3,10 @@ clear;
 close all;
 
 %% -------------------------------
-% Number of samples
+% Number of samples / Time
 %% -------------------------------
-% N = 100;
+% FIX 1: Increased T to give the FFT enough data for high resolution
+T = 1e-4; 
 
 %% -------------------------------
 % Sampling rates
@@ -13,19 +14,19 @@ close all;
 Fs1 = 10e6;   % RAM1
 Fs2 = 15e6;   % RAM2
 Fs3 = 20e6;   % RAM3
-T = 1e-5; %time of sampling
+
 %% -------------------------------
 % Time vectors
 %% -------------------------------
-t1 = (0:1/Fs1:T);
-t2 = (0:1/Fs2:T);
-t3 = (0:1/Fs3:T);
+% FIX 2: Added transpose (') to make these column vectors for the timetable
+t1 = (0:1/Fs1:T)';
+t2 = (0:1/Fs2:T)';
+t3 = (0:1/Fs3:T)';
 
 %% -------------------------------
 % Generate complex signals
 % Keep freq within bandwidth
 %% -------------------------------
-
 % RAM1: BW = 2 MHz → choose 1 MHz tone
 f1 = 1e6;
 x1 = exp(1j*2*pi*f1*t1);
@@ -41,42 +42,94 @@ x3 = exp(1j*2*pi*f3*t3);
 %% -------------------------------
 % Quantization (IMPORTANT)
 %% -------------------------------
-
 % RAM1: 8-bit complex
 x1_real = fi(real(x1), 1, 8, 6);
 x1_imag = fi(imag(x1), 1, 8, 6);
-ram1_data_val = complex(double(x1_real), double(x1_imag));
-ram1_data=timetable(ram1_data_val,SampleRate=Fs1);
+ram1_data_val = complex(x1_real, x1_imag);
+ram1_data = timetable(ram1_data_val, 'SampleRate', Fs1);
 
 % RAM2: 10-bit complex
 x2_real = fi(real(x2), 1, 10, 8);
 x2_imag = fi(imag(x2), 1, 10, 8);
-ram2_data_val = complex(double(x2_real), double(x2_imag));
-ram2_data=timetable(ram2_data_val,SampleRate=Fs2);
+ram2_data_val = complex(x2_real, x2_imag);
+ram2_data = timetable(ram2_data_val, 'SampleRate', Fs2);
 
 % RAM3: 12-bit complex
 x3_real = fi(real(x3), 1, 12, 10);
 x3_imag = fi(imag(x3), 1, 12, 10);
-ram3_data_val = complex(double(x3_real), double(x3_imag));
-ram3_data=timetable(ram3_data_val,SampleRate=Fs3);
-
+ram3_data_val = complex(x3_real, x3_imag);
+ram3_data = timetable(ram3_data_val, 'SampleRate', Fs3);
 
 %% -------------------------------
 % Display info
 %% -------------------------------
 disp('RAM1 (8-bit) sample:');
 disp(ram1_data_val(1:5));
-
 disp('RAM2 (10-bit) sample:');
 disp(ram2_data_val(1:5));
-
 disp('RAM3 (12-bit) sample:');
 disp(ram3_data_val(1:5));
 
 %% -------------------------------
-% Optional: plot real parts
+% Optional: plot real parts of input
 %% -------------------------------
 figure;
-subplot(3,1,1); plot(real(ram1_data_val)); title('RAM1 Signal');
-subplot(3,1,2); plot(real(ram2_data_val)); title('RAM2 Signal');
-subplot(3,1,3); plot(real(ram3_data_val)); title('RAM3 Signal');
+subplot(3,1,1); plot(t1, real(ram1_data_val)); title('RAM1 Signal (Real Part)');
+subplot(3,1,2); plot(t2, real(ram2_data_val)); title('RAM2 Signal (Real Part)');
+subplot(3,1,3); plot(t3, real(ram3_data_val)); title('RAM3 Signal (Real Part)');
+
+%% -------------------------------
+% Run Simulation and Extract Output
+%% -------------------------------
+disp('Running Simulink model...');
+
+% Run the simulation. 
+out = sim('dsp_proj_v2'); 
+
+logged_signal = out.logsout.get(2); % Gets the first logged signal
+final_data = logged_signal.Values.Data;
+final_time = logged_signal.Values.Time;
+
+% FIX 3: Keep the full complex signal! Do not use real() here.
+complex_out_data = double(squeeze(final_data));
+
+%% -------------------------------
+% Plot the Final Result (Time Domain)
+%% -------------------------------
+figure;
+plot(final_time, real(complex_out_data), 'b', final_time, imag(complex_out_data), 'r--');
+title('Final Processed Output from Simulink (Real & Imaginary)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+legend('Real Part', 'Imaginary Part');
+grid on;
+
+%% -------------------------------
+% Complex Frequency Domain Analysis (FFT)
+%% -------------------------------
+disp('Calculating Complex FFT...');
+
+% 1. Determine the actual sampling rate of the output data (Should be 60 MHz)
+dt = mean(diff(final_time)); 
+Fs_out = 1 / dt; 
+L = length(complex_out_data);
+
+% 2. Compute the Shifted Complex Fast Fourier Transform
+Y = fftshift(fft(complex_out_data));
+
+% 3. Calculate true amplitude
+P_amp = abs(Y / L);
+
+% 4. Define the frequency domain vector (From -Fs/2 to +Fs/2)
+f = linspace(-Fs_out/2, Fs_out/2 - Fs_out/L, L);
+
+% 5. Plot the Complex Spectrum
+figure;
+plot(f / 1e6, P_amp, 'LineWidth', 1.5);
+title('Complex Amplitude Spectrum of 60 MHz Output');
+xlabel('Frequency (MHz)');
+ylabel('Amplitude');
+grid on;
+
+% FIX 4: Zoom the X-axis to focus on the -5 to +5 MHz range
+xlim([0 5]);
