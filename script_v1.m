@@ -81,55 +81,55 @@ subplot(3,1,3); plot(t3, real(ram3_data_val)); title('RAM3 Signal (Real Part)');
 %% -------------------------------
 % Run Simulation and Extract Output
 %% -------------------------------
-disp('Running Simulink model...');
-
-% Run the simulation. 
-out = sim('dsp_proj_v2'); 
-
-logged_signal = out.logsout.get(2); % Gets the first logged signal
-final_data = logged_signal.Values.Data;
-final_time = logged_signal.Values.Time;
-
-% FIX 3: Keep the full complex signal! Do not use real() here.
-complex_out_data = double(squeeze(final_data));
-
-%% -------------------------------
-% Plot the Final Result (Time Domain)
-%% -------------------------------
-figure;
-plot(final_time, real(complex_out_data), 'b', final_time, imag(complex_out_data), 'r--');
-title('Final Processed Output from Simulink (Real & Imaginary)');
-xlabel('Time (s)');
-ylabel('Amplitude');
-legend('Real Part', 'Imaginary Part');
-grid on;
-
-%% -------------------------------
-% Complex Frequency Domain Analysis (FFT)
-%% -------------------------------
-disp('Calculating Complex FFT...');
-
-% 1. Determine the actual sampling rate of the output data (Should be 60 MHz)
-dt = mean(diff(final_time)); 
-Fs_out = 1 / dt; 
-L = length(complex_out_data);
-
-% 2. Compute the Shifted Complex Fast Fourier Transform
-Y = fftshift(fft(complex_out_data));
-
-% 3. Calculate true amplitude
-P_amp = abs(Y / L);
-
-% 4. Define the frequency domain vector (From -Fs/2 to +Fs/2)
-f = linspace(-Fs_out/2, Fs_out/2 - Fs_out/L, L);
-
-% 5. Plot the Complex Spectrum
-figure;
-plot(f / 1e6, P_amp, 'LineWidth', 1.5);
-title('Complex Amplitude Spectrum of 60 MHz Output');
-xlabel('Frequency (MHz)');
-ylabel('Amplitude');
-grid on;
-
-% FIX 4: Zoom the X-axis to focus on the -5 to +5 MHz range
-xlim([0 5]);
+% disp('Running Simulink model...');
+% 
+% % Run the simulation. 
+% out = sim('dsp_proj_v2'); 
+% 
+% logged_signal = out.logsout.get(2); % Gets the first logged signal
+% final_data = logged_signal.Values.Data;
+% final_time = logged_signal.Values.Time;
+% 
+% % FIX 3: Keep the full complex signal! Do not use real() here.
+% complex_out_data = double(squeeze(final_data));
+% 
+% %% -------------------------------
+% % Plot the Final Result (Time Domain)
+% %% -------------------------------
+% figure;
+% plot(final_time, real(complex_out_data), 'b', final_time, imag(complex_out_data), 'r--');
+% title('Final Processed Output from Simulink (Real & Imaginary)');
+% xlabel('Time (s)');
+% ylabel('Amplitude');
+% legend('Real Part', 'Imaginary Part');
+% grid on;
+% 
+% %% -------------------------------
+% % Complex Frequency Domain Analysis (FFT)
+% %% -------------------------------
+% disp('Calculating Complex FFT...');
+% 
+% % 1. Determine the actual sampling rate of the output data (Should be 60 MHz)
+% dt = mean(diff(final_time)); 
+% Fs_out = 1 / dt; 
+% L = length(complex_out_data);
+% 
+% % 2. Compute the Shifted Complex Fast Fourier Transform
+% Y = fftshift(fft(complex_out_data));
+% 
+% % 3. Calculate true amplitude
+% P_amp = abs(Y / L);
+% 
+% % 4. Define the frequency domain vector (From -Fs/2 to +Fs/2)
+% f = linspace(-Fs_out/2, Fs_out/2 - Fs_out/L, L);
+% 
+% % 5. Plot the Complex Spectrum
+% figure;
+% plot(f / 1e6, P_amp, 'LineWidth', 1.5);
+% title('Complex Amplitude Spectrum of 60 MHz Output');
+% xlabel('Frequency (MHz)');
+% ylabel('Amplitude');
+% grid on;
+% 
+% % FIX 4: Zoom the X-axis to focus on the -5 to +5 MHz range
+% xlim([0 5]);
