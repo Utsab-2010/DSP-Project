@@ -111,7 +111,7 @@ disp('Calculating Complex FFT...');
 dt = mean(diff(final_time)); 
 Fs_out = 1 / dt; 
 
-start_idx = 30;
+start_idx = 300;
 %Ignore transients
 steady_data = complex_out_data(start_idx : length(complex_out_data)-1);
 L=length(steady_data);
