@@ -5,7 +5,7 @@ close all;
 %% -------------------------------
 % 1. Simulation Parameters
 %% -------------------------------
-N = 1000;           % Exact number of data points to load into RAM
+N = 3000;           % Exact number of data points to load into RAM
 Fs_master = 60e6;   % Master Simulation Rate (LCM of 10, 15, 20)
 
 % Individual Sampling rates
@@ -85,3 +85,48 @@ output_dt = fixdt(1, 14, 11);
 % 4. Connect the Lookup Table output to your Single Port RAM 'Data In'.
 % 5. Connect the Counter to the Single Port RAM 'Addr'.
 % 6. Apply a Constant '1' to the 'WE' port to write the data.
+
+%% ---------------------------------
+out = sim('dsp_proj_v3'); 
+
+logged_signal = out.logsout.get(1); % Gets the first logged signal
+final_data = logged_signal.Values.Data;
+final_time = logged_signal.Values.Time;
+
+complex_out_data = double(squeeze(final_data));
+
+%% Plot the Final Result (Time Domain)
+
+figure;
+plot(final_time, real(complex_out_data), 'b', final_time, imag(complex_out_data), 'r--');
+title('Final Processed Output from Simulink (Real & Imaginary)');
+xlabel('Time (s)');
+ylabel('Amplitude');
+legend('Real Part', 'Imaginary Part');
+grid on;
+
+disp('Calculating Complex FFT...');
+
+
+dt = mean(diff(final_time)); 
+Fs_out = 1 / dt; 
+
+start_idx = 30;
+%Ignore transients
+steady_data = complex_out_data(start_idx : length(complex_out_data)-1);
+L=length(steady_data);
+
+Y = fftshift(fft(steady_data));
+P_amp = abs(Y / L);
+
+
+f = linspace(-Fs_out/2, Fs_out/2 - Fs_out/L, L);
+
+
+figure;
+plot(f / 1e6, P_amp, 'LineWidth', 1.5);
+title('Coherent Amplitude Spectrum of 60 MHz Output');
+xlabel('Frequency (MHz)');
+ylabel('Amplitude');
+grid on;
+xlim([0 5]);
