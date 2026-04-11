@@ -46,19 +46,19 @@ x3 = exp(1j*2*pi*f3*t3);
 x1_real = fi(real(x1), 1, 8, 6);
 x1_imag = fi(imag(x1), 1, 8, 6);
 ram1_data_val = complex(x1_real, x1_imag);
-ram1_data = timetable(ram1_data_val, 'SampleRate', Fs1);
+ram1_data = ram1_data_val;
 
 % RAM2: 10-bit complex
 x2_real = fi(real(x2), 1, 10, 8);
 x2_imag = fi(imag(x2), 1, 10, 8);
 ram2_data_val = complex(x2_real, x2_imag);
-ram2_data = timetable(ram2_data_val, 'SampleRate', Fs2);
+ram2_data = ram2_data_val;
 
 % RAM3: 12-bit complex
 x3_real = fi(real(x3), 1, 12, 10);
 x3_imag = fi(imag(x3), 1, 12, 10);
 ram3_data_val = complex(x3_real, x3_imag);
-ram3_data = timetable(ram3_data_val, 'SampleRate', Fs3);
+ram3_data = ram3_data_val;
 
 %% -------------------------------
 % Display info
@@ -84,7 +84,7 @@ subplot(3,1,3); plot(t3, real(ram3_data_val)); title('RAM3 Signal (Real Part)');
 disp('Running Simulink model...');
 
 % Run the simulation. 
-out = sim('dsp_proj_v2'); 
+out = sim('dsp_proj_v2_2024'); 
 
 logged_signal = out.logsout.get(2); % Gets the first logged signal
 final_data = logged_signal.Values.Data;
