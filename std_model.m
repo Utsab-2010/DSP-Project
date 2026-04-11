@@ -15,6 +15,7 @@ Fs1 = 10e6;   % RAM1
 Fs2 = 15e6;   % RAM2
 Fs3 = 20e6;   % RAM3
 Fs = 60e6;
+Fsf = 12e6;
 
 %% -------------------------------
 % Time vectors
@@ -44,13 +45,17 @@ x1_up = upsample(x1,6);
 x2_up = upsample(x2,4);
 x3_up = upsample(x3,3);
 
-h1 = firpm(20,[0 2*f1/Fs 2*f1/Fs+0.01 1], [1 1 0 0], [1 10]);
-h2 = firpm(20,[0 2*f2/Fs 2*f2/Fs+0.01 1], [1 1 0 0], [1 10]);
-h3 = firpm(20,[0 2*f3/Fs 2*f3/Fs+0.01 1], [1 1 0 0], [1 10]);
+h1 = firpm(150,[0 0.2 0.24 1], [1 1 0 0], [1 10]);
+h2 = firpm(150,[0 0.2 0.24 1], [1 1 0 0], [1 10]);
+h3 = firpm(150,[0 0.2 0.24 1], [1 1 0 0], [1 10]);
 
-y1 = downsample(filtfilt(h1,1,x1_up),5);
-y2 = downsample(filtfilt(h2,1,x2_up),5);
-y3 = downsample(filtfilt(h3,1,x3_up),5);
+h1 = h1./sum(h1);
+h2 = h2./sum(h2);
+h3 = h3./sum(h3);
+
+y1 = downsample(filter(h1,1,x1_up),5);
+y2 = downsample(filter(h2,1,x2_up),5);
+y3 = downsample(filter(h3,1,x3_up),5);
 olen = min([length(y1) length(y2) length(y3)]);
 y1 = y1(1:olen);
 y2 = y2(1:olen);
@@ -68,16 +73,16 @@ Y = fftshift(fft(y));
 P = abs(Y) / L;
 
 % Frequency axis (two-sided)
-f = linspace(-Fs/2, Fs/2 - Fs/L, L);
+f = linspace(-Fsf/2, Fsf/2 - Fsf/L, L);
 
 % Plot
 figure;
-plot(f/1e6, P, 'LineWidth', 1.5);
+plot(f, P, 'LineWidth', 1.5);
 xlabel('Frequency (MHz)');
 ylabel('Magnitude');
 title('Output Spectrum');
 grid on;
 
 % Optional zoom (since your tones are within ~±5 MHz)
-xlim([-10 10]);
+xlim([-Fsf/2 +Fsf/2]);
 
