@@ -87,7 +87,7 @@ output_dt = fixdt(1, 14, 11);
 % 6. Apply a Constant '1' to the 'WE' port to write the data.
 
 %% ---------------------------------
-out = sim('dsp_proj_v3'); 
+out = sim('dsp_proj_v3_2024'); 
 
 logged_signal = out.logsout.get(1); % Gets the first logged signal
 final_data = logged_signal.Values.Data;
@@ -113,7 +113,7 @@ Fs_out = 1 / dt;
 
 start_idx = 300;
 %Ignore transients
-steady_data = complex_out_data(start_idx : length(complex_out_data)-1);
+steady_data = complex_out_data(start_idx : length(complex_out_data));
 L=length(steady_data);
 
 Y = fftshift(fft(steady_data));
@@ -124,9 +124,9 @@ f = linspace(-Fs_out/2, Fs_out/2 - Fs_out/L, L);
 
 
 figure;
-plot(f / 1e6, P_amp, 'LineWidth', 1.5);
+plot(f, P_amp, 'LineWidth', 1.5);
 title('Amplitude Spectrum of 60 MHz Output');
 xlabel('Frequency (MHz)');
 ylabel('Amplitude');
 grid on;
-xlim([0 5]);
+xlim([-6e6 6e6]);
