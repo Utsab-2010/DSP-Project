@@ -125,7 +125,7 @@ f = linspace(-Fs_out/2, Fs_out/2 - Fs_out/L, L);
 
 figure;
 plot(f / 1e6, P_amp, 'LineWidth', 1.5);
-title('Coherent Amplitude Spectrum of 60 MHz Output');
+title('Amplitude Spectrum of 60 MHz Output');
 xlabel('Frequency (MHz)');
 ylabel('Amplitude');
 grid on;
