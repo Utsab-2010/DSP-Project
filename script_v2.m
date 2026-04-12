@@ -70,6 +70,42 @@ disp('Data padded to 4096 entries to match RAM depth.');
 disp('Data prepared for Index-Based Simulink Loading.');
 disp('Use variables: ram1_init_data, ram2_init_data, ram3_init_data');
 
+%%
+% Design the filter using normalized frequencies (0 to 1)
+d_1 = designfilt('lowpassfir', ...
+    'PassbandFrequency', 0.18, ...
+    'StopbandFrequency', 0.24, ...
+    'PassbandRipple', 0.1, ...
+    'StopbandAttenuation', 80, ...
+    'DesignMethod', 'equiripple');
+
+% Extract the hardware coefficients
+b_1 = d_1.Coefficients;
+
+
+% Design the filter using normalized frequencies (0 to 1)
+d_2 = designfilt('lowpassfir', ...
+    'PassbandFrequency', 0.25, ...
+    'StopbandFrequency', 0.35, ...
+    'PassbandRipple', 0.1, ...
+    'StopbandAttenuation', 80, ...
+    'DesignMethod', 'equiripple');
+
+% Extract the hardware coefficients
+b_2 = d_2.Coefficients;
+disp('Designing Universal FIR Filter for Hardware...');
+
+% Design the filter using normalized frequencies (0 to 1)
+d_3 = designfilt('lowpassfir', ...
+    'PassbandFrequency', 0.3, ...
+    'StopbandFrequency', 0.35, ...
+    'PassbandRipple', 0.1, ...
+    'StopbandAttenuation', 80, ...
+    'DesignMethod', 'equiripple');
+
+% Extract the hardware coefficients
+b_3 = d_3.Coefficients;
+
 %% -------------------------------
 % 6. Simulink Setup Notes (Hardware Accurate Method)
 %% -------------------------------
@@ -87,7 +123,7 @@ output_dt = fixdt(1, 14, 11);
 % 6. Apply a Constant '1' to the 'WE' port to write the data.
 
 %% ---------------------------------
-out = sim('dsp_proj_v3_2024'); 
+out = sim('dsp_proj_v3_2024_n'); 
 
 logged_signal = out.logsout.get(1); % Gets the first logged signal
 final_data = logged_signal.Values.Data;
@@ -111,7 +147,7 @@ disp('Calculating Complex FFT...');
 dt = mean(diff(final_time)); 
 Fs_out = 1 / dt; 
 
-start_idx = 300;
+start_idx = 200;
 %Ignore transients
 steady_data = complex_out_data(start_idx : length(complex_out_data));
 L=length(steady_data);
@@ -129,4 +165,5 @@ title('Amplitude Spectrum of 60 MHz Output');
 xlabel('Frequency (MHz)');
 ylabel('Amplitude');
 grid on;
-xlim([-6e6 6e6]);
+xlim([0 5]);
+disp('Designing Universal FIR Filter for Hardware...');
