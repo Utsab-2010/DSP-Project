@@ -1,0 +1,13 @@
+vlib work
+vlog  dsp_proj_v3_2024_n_tc.v
+vlog  Positive.v
+vlog  Trigger_Reset_when_Going_to_processing_mode.v
+vlog  Chart.v
+vlog  Discrete_FIR_Filter.v
+vlog  Discrete_FIR_Filter1.v
+vlog  Discrete_FIR_Filter2.v
+vlog  SinglePortRAM_generic.v
+vlog  SinglePortRAM_generic_block.v
+vlog  SinglePortRAM_generic_block1.v
+vlog  SinglePortRAM_generic_block2.v
+vlog  dsp_proj_v3_2024_n.v
