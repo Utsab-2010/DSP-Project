@@ -44,31 +44,9 @@ x1_up = upsample(x1,6);
 x2_up = upsample(x2,4);
 x3_up = upsample(x3,3);
 
-%{
-fp1 = 0.3;
-fp2 = 0.25;
-fp3 = 0.18;
-
-fs1 = 0.35;
-fs2 = 0.35;
-fs3 = 0.24;
-
-rp = 0.1; % max passband ripple
-rs = 80; % stopband attenuation
-
-delta_p = (10^(rp/20)-1)/(10^(rp/20)+1);
-delta_s = 10^(-rs/20);
-
-[n1, fo1, ao1, w1] = firpmord([fp1 fs1], [1 0], [delta_p delta_s]);
-[n2, fo2, ao2, w2] = firpmord([fp2 fs2], [1 0], [delta_p delta_s]);
-[n3, fo3, ao3, w3] = firpmord([fp3 fs3], [1 0], [delta_p delta_s]);
-
-h1 = firpm(n1, fo1, ao1, w1);
-h2 = firpm(n2, fo2, ao2, w2);
-h3 = firpm(n3, fo3, ao3, w3);
-%}
+%%
 % Design the filter using normalized frequencies (0 to 1)
-d_1 = designfilt('lowpassfir', ...
+d_3 = designfilt('lowpassfir', ...
     'PassbandFrequency', 0.18, ...
     'StopbandFrequency', 0.24, ...
     'PassbandRipple', 0.1, ...
@@ -76,7 +54,7 @@ d_1 = designfilt('lowpassfir', ...
     'DesignMethod', 'equiripple');
 
 % Extract the hardware coefficients
-b_1 = d_1.Coefficients;
+b_3 = d_3.Coefficients;
 
 
 % Design the filter using normalized frequencies (0 to 1)
@@ -92,7 +70,7 @@ b_2 = d_2.Coefficients;
 disp('Designing Universal FIR Filter for Hardware...');
 
 % Design the filter using normalized frequencies (0 to 1)
-d_3 = designfilt('lowpassfir', ...
+d_1 = designfilt('lowpassfir', ...
     'PassbandFrequency', 0.3, ...
     'StopbandFrequency', 0.35, ...
     'PassbandRipple', 0.1, ...
@@ -100,7 +78,7 @@ d_3 = designfilt('lowpassfir', ...
     'DesignMethod', 'equiripple');
 
 % Extract the hardware coefficients
-b_3 = d_3.Coefficients;
+b_1 = d_1.Coefficients;
 
 y1 = 6*downsample(filter(b_3,1,x1_up),5);
 y2 = 4*downsample(filter(b_2,1,x2_up),5);
@@ -124,7 +102,7 @@ Y = fftshift(fft(y));
 P = abs(Y) / L;
 
 % Frequency axis (two-sided)
-f = linspace(-Fsf/2, Fsf/2 - Fsf/L, L);
+f = linspace(-Fsf/10, Fsf/10, L);
 
 % Plot
 figure;
@@ -135,5 +113,5 @@ title('Output Spectrum');
 grid on;
 
 % Optional zoom (since your tones are within ~±5 MHz)
-xlim([-Fsf/2 +Fsf/2]);
+xlim([-Fsf/10 +Fsf/10]);
 

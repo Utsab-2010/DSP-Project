@@ -123,7 +123,7 @@ output_dt = fixdt(1, 14, 11);
 % 6. Apply a Constant '1' to the 'WE' port to write the data.
 
 %% ---------------------------------
-out = sim('dsp_proj_v3_2024_n'); 
+out = sim('dsp_proj_v3_2024_n_2024b'); 
 
 logged_signal = out.logsout.get(1); % Gets the first logged signal
 final_data = logged_signal.Values.Data;
@@ -165,5 +165,5 @@ title('Amplitude Spectrum of 60 MHz Output');
 xlabel('Frequency (MHz)');
 ylabel('Amplitude');
 grid on;
-xlim([0 5]);
+xlim([-6 6]);
 disp('Designing Universal FIR Filter for Hardware...');
